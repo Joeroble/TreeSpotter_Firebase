@@ -17,6 +17,8 @@ class TreeViewModel: ViewModel() {
 
     val latestTrees = MutableLiveData<List<Tree>>()
 
+    var enteredTreeName: String? = null
+
     // get all of the tree sightings
 
     private val latestTreesListenter = treeCollectionReference
@@ -55,5 +57,9 @@ class TreeViewModel: ViewModel() {
 
     fun deleteTree(tree: Tree){
         tree.documentReference?.delete()
+    }
+
+    fun treeName(): String?{
+       return enteredTreeName
     }
 }

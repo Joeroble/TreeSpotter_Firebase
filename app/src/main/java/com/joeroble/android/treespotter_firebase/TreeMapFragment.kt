@@ -15,7 +15,9 @@ import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -34,9 +36,10 @@ import java.util.*
 
 
 private const val TAG = "TREE_MAP_FRAGMENT"
+private const val TREE_NAME = "TREE_NAME_DIALOG"
 
 
-class TreeMapFragment : Fragment() {
+class TreeMapFragment : Fragment(){
 
     private lateinit var addTreeButton: FloatingActionButton
 
@@ -73,6 +76,20 @@ class TreeMapFragment : Fragment() {
 
     }
 
+//    fun showTreeDialog(){
+//        val dialog = TreeNameDialogFragment()
+//        dialog.show((activity as FragmentActivity).supportFragmentManager, "TreeNameDialogFragment")
+//    }
+//
+//    override fun onDialogPositiveClick(dialog: DialogFragment){
+//        TODO("Not yet implemented")
+//
+//    }
+//
+//    override fun onDialogNegativeClick(dialog: DialogFragment) {
+//        TODO("Not yet implemented")
+//    }
+
     private fun requestDeleteTree(tree: Tree) {
         AlertDialog.Builder(requireActivity())
             .setTitle(getString(R.string.delete))
@@ -88,7 +105,6 @@ class TreeMapFragment : Fragment() {
     }
 
     private fun updateMap() {
-        //TODO draw markers
         drawTrees()
 
         if(locationPermissionGranted){
@@ -220,8 +236,10 @@ class TreeMapFragment : Fragment() {
         return mainView
     }
 
+
+
     @SuppressLint("MissingPermission")
-    private fun addTreeAtLocation() {
+     private fun addTreeAtLocation() {
 
         if (map == null) {
             return
@@ -237,8 +255,8 @@ class TreeMapFragment : Fragment() {
         fusedLocationProvider?.lastLocation?.addOnCompleteListener(requireActivity()) { locationRequestTask ->
             val location = locationRequestTask.result
             if (location != null) {
-                val treeName = getTreeName()
-                if (treeName.isNotEmpty()) {
+              val treeName = getTreeName()
+                if (treeName != null) {
                     val tree = Tree(
                         name = treeName,
                         dateSpotted = Date(),
@@ -286,31 +304,38 @@ class TreeMapFragment : Fragment() {
 
     }
 
-    private fun getTreeName(): String {
+    private fun getTreeName(): String? {
        val treeListSelection =  listOf("Fir", "Oak", "Pine", "Redwood", "Sequoia").random()
-       val treeInput = EditText(requireActivity())
+        TreeNameDialogFragment().show(childFragmentManager, TreeNameDialogFragment.TAG)
 
 
-            treeInput.setHint("Enter tree name")
-            treeInput.inputType = InputType.TYPE_CLASS_TEXT
+        val treeNamed = treeViewModel.treeName()
+        return treeNamed
+
+        // old code that didn't work out
+      // val treeInput = EditText(requireActivity())
+
+        // notes - so the background threads do not wait for the result of the dialog
+        // so I need to find a way to save this information
             // this one was a bugger!  I was on the right path with the EditText, and setView, but it wouldn't
             // show up, I found this article that filled in the missing pieces!  https://handyopinion.com/show-alert-dialog-with-an-input-field-edittext-in-android-kotlin/
             // This is pretty neat
-            AlertDialog.Builder(requireActivity())
-                .setTitle(getString(R.string.enter_tree_name))
-                .setView(treeInput)
-                .setPositiveButton(android.R.string.ok) { dialog, id ->
-                    namedTree = treeInput.text.toString()
-//                showSnackbar(namedTree)
-                }
-                .setNegativeButton(android.R.string.cancel) { dialog, id ->
-                    namedTree = getString(R.string.tree_name_left_blank)
-                }
-                .create()
-                .show()
+//            AlertDialog.Builder(requireContext())
+//                .setTitle(getString(R.string.enter_tree_name))
+//                .setView(treeInput)
+//                .setPositiveButton(android.R.string.ok) { dialog, id ->
+//                    namedTree = treeInput.text.toString()
+////                showSnackbar(namedTree)
+//                }
+//                .setNegativeButton(android.R.string.cancel) { dialog, id ->
+//                    namedTree = getString(R.string.tree_name_left_blank)
+//                }
+//                .create()
+//               TreeNameDialogFragment().show(
+//                   childFragmentManager, TreeNameDialogFragment.TAG
+//               )
 
 
-            return namedTree
 
 
     }

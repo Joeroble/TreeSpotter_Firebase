@@ -19,12 +19,12 @@ class TreeNameDialogFragment : DialogFragment() {
 
 
     private lateinit var treeInput: EditText
-//    private lateinit var listener: TreeNameDialogListener
-//
-//    interface TreeNameDialogListener{
-//        fun onDialogPositiveClick(dialog: DialogFragment)
-//        fun onDialogNegativeClick(dialog: DialogFragment)
-//    }
+    private lateinit var listener: TreeNameDialogListener
+
+    interface TreeNameDialogListener{
+        fun onDialogPositiveClick(dialog: DialogFragment)
+        fun onDialogNegativeClick(dialog: DialogFragment)
+    }
 
     private val treeViewModel: TreeViewModel by lazy {
         ViewModelProvider(requireActivity()).get(TreeViewModel::class.java)
@@ -35,14 +35,14 @@ class TreeNameDialogFragment : DialogFragment() {
 
     }
 
-//    override fun onAttach(context: Context){
-//        super.onAttach(context)
-//        try {
-//            listener = context as TreeNameDialogListener
-//        } catch (e: ClassCastException){
-//            throw ClassCastException((context.toString() + " must implement TreeNameDialogListener"))
-//        }
-//    }
+    override fun onAttach(context: Context){
+        super.onAttach(context)
+        try {
+            listener = context as TreeNameDialogListener
+        } catch (e: ClassCastException){
+            throw ClassCastException((context.toString() + " must implement TreeNameDialogListener"))
+        }
+    }
 
 
 
@@ -65,13 +65,13 @@ class TreeNameDialogFragment : DialogFragment() {
             treeInput = mainView.findViewById(R.id.tree_name_textview)
             builder.setView(mainView)
                 .setPositiveButton(android.R.string.ok) {dialog, id ->
-//                   listener.onDialogPositiveClick(this)
                     val namedTree = treeInput.text.toString()
                     treeViewModel.enteredTreeName = namedTree
+                    listener.onDialogPositiveClick(this)
                 }
                 .setNegativeButton(android.R.string.cancel){dialog, id ->
-//                    listener.onDialogNegativeClick(this)
                     treeViewModel.enteredTreeName = null
+                    listener.onDialogNegativeClick(this)
                     getDialog()?.cancel()
                 }
             builder.create()

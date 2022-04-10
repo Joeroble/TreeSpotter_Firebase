@@ -39,7 +39,7 @@ private const val TAG = "TREE_MAP_FRAGMENT"
 private const val TREE_NAME = "TREE_NAME_DIALOG"
 
 
-class TreeMapFragment : Fragment(){
+class TreeMapFragment : Fragment(), TreeNameDialogFragment.TreeNameDialogListener{
 
     private lateinit var addTreeButton: FloatingActionButton
 
@@ -55,7 +55,7 @@ class TreeMapFragment : Fragment(){
 
     private var treeList = listOf<Tree>()
 
-    private var namedTree = ""
+    private var namedTree: String? = null
 
 
 
@@ -76,19 +76,19 @@ class TreeMapFragment : Fragment(){
 
     }
 
-//    fun showTreeDialog(){
-//        val dialog = TreeNameDialogFragment()
-//        dialog.show((activity as FragmentActivity).supportFragmentManager, "TreeNameDialogFragment")
-//    }
-//
-//    override fun onDialogPositiveClick(dialog: DialogFragment){
-//        TODO("Not yet implemented")
-//
-//    }
-//
-//    override fun onDialogNegativeClick(dialog: DialogFragment) {
-//        TODO("Not yet implemented")
-//    }
+    private fun showTreeDialog(){
+        val dialog = TreeNameDialogFragment()
+        dialog.show((activity as FragmentActivity).supportFragmentManager, "TreeNameDialogFragment")
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment){
+        addTreeAtLocation()
+
+    }
+
+    override fun onDialogNegativeClick(dialog: DialogFragment) {
+
+    }
 
     private fun requestDeleteTree(tree: Tree) {
         AlertDialog.Builder(requireActivity())
@@ -213,7 +213,10 @@ class TreeMapFragment : Fragment(){
         addTreeButton = mainView.findViewById(R.id.add_tree)
         addTreeButton.setOnClickListener{
             // todo add tree at user's location - if location permission granted and location available
-            addTreeAtLocation()
+
+//        showTreeDialog()
+           getTreeName()
+        // addTreeAtLocation()
         }
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map_view) as SupportMapFragment
@@ -255,7 +258,7 @@ class TreeMapFragment : Fragment(){
         fusedLocationProvider?.lastLocation?.addOnCompleteListener(requireActivity()) { locationRequestTask ->
             val location = locationRequestTask.result
             if (location != null) {
-              val treeName = getTreeName()
+              val treeName = namedTree
                 if (treeName != null) {
                     val tree = Tree(
                         name = treeName,
@@ -304,16 +307,15 @@ class TreeMapFragment : Fragment(){
 
     }
 
-    private fun getTreeName(): String? {
+    private fun getTreeName() {
        val treeListSelection =  listOf("Fir", "Oak", "Pine", "Redwood", "Sequoia").random()
         TreeNameDialogFragment().show(childFragmentManager, TreeNameDialogFragment.TAG)
 
 
-        val treeNamed = treeViewModel.treeName()
-        return treeNamed
+
 
         // old code that didn't work out
-      // val treeInput = EditText(requireActivity())
+//       val treeInput = EditText(requireActivity())
 
         // notes - so the background threads do not wait for the result of the dialog
         // so I need to find a way to save this information
@@ -325,6 +327,7 @@ class TreeMapFragment : Fragment(){
 //                .setView(treeInput)
 //                .setPositiveButton(android.R.string.ok) { dialog, id ->
 //                    namedTree = treeInput.text.toString()
+//                    addTreeAtLocation()
 ////                showSnackbar(namedTree)
 //                }
 //                .setNegativeButton(android.R.string.cancel) { dialog, id ->
@@ -336,6 +339,8 @@ class TreeMapFragment : Fragment(){
 //               )
 
 
+//        val treeNamed = treeViewModel.treeName()
+//        return treeNamed
 
 
     }

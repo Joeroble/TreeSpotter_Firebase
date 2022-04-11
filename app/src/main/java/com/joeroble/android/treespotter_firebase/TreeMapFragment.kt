@@ -15,9 +15,7 @@ import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.*
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -55,7 +53,7 @@ class TreeMapFragment : Fragment(), TreeNameDialogFragment.TreeNameDialogListene
 
     private var treeList = listOf<Tree>()
 
-    private var namedTree: String? = null
+//    private var namedTree: String? = null
 
 
 
@@ -78,11 +76,13 @@ class TreeMapFragment : Fragment(), TreeNameDialogFragment.TreeNameDialogListene
 
     private fun showTreeDialog(){
         val dialog = TreeNameDialogFragment()
-        dialog.show((activity as FragmentActivity).supportFragmentManager, "TreeNameDialogFragment")
+        dialog.setTargetFragment(this, 0)
+        dialog.show(parentFragmentManager, "TreeNameDialogFragment")
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment){
         addTreeAtLocation()
+        showSnackbar("It is reaching this point")
 
     }
 
@@ -214,8 +214,9 @@ class TreeMapFragment : Fragment(), TreeNameDialogFragment.TreeNameDialogListene
         addTreeButton.setOnClickListener{
             // todo add tree at user's location - if location permission granted and location available
 
-//        showTreeDialog()
-           getTreeName()
+        showTreeDialog()
+
+//           getTreeName()
         // addTreeAtLocation()
         }
 
@@ -258,7 +259,7 @@ class TreeMapFragment : Fragment(), TreeNameDialogFragment.TreeNameDialogListene
         fusedLocationProvider?.lastLocation?.addOnCompleteListener(requireActivity()) { locationRequestTask ->
             val location = locationRequestTask.result
             if (location != null) {
-              val treeName = namedTree
+              val treeName = treeViewModel.enteredTreeName
                 if (treeName != null) {
                     val tree = Tree(
                         name = treeName,

@@ -30,19 +30,21 @@ class TreeNameDialogFragment : DialogFragment() {
         ViewModelProvider(requireActivity()).get(TreeViewModel::class.java)
     }
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
     }
 
-    override fun onAttach(context: Context){
-        super.onAttach(context)
-        try {
-            listener = context as TreeNameDialogListener
-        } catch (e: ClassCastException){
-            throw ClassCastException((context.toString() + " must implement TreeNameDialogListener"))
-        }
-    }
+//    override fun onAttach(context: Context){
+//        super.onAttach(context)
+//        try {
+//            listener = context as TreeNameDialogListener
+//        } catch (e: ClassCastException){
+//            throw ClassCastException((context.toString() + " must implement TreeNameDialogListener"))
+//        }
+//    }
 
 
 
@@ -53,6 +55,13 @@ class TreeNameDialogFragment : DialogFragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_tree_name_dialog, container, false)
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        targetFragment?.let{
+            listener = it as TreeNameDialogListener
+        }
     }
 
     // Worked through this and adapted it from the developer android documentation
@@ -82,6 +91,8 @@ class TreeNameDialogFragment : DialogFragment() {
 
     companion object {
         const val TAG = "TREE_NAME_DIALOG"
+        @JvmStatic
+        fun newInstance() = TreeNameDialogFragment()
 
     }
 }

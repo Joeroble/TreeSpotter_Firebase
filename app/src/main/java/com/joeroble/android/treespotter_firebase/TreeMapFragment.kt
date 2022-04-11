@@ -82,8 +82,6 @@ class TreeMapFragment : Fragment(), TreeNameDialogFragment.TreeNameDialogListene
 
     override fun onDialogPositiveClick(dialog: DialogFragment){
         addTreeAtLocation()
-        showSnackbar("It is reaching this point")
-
     }
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {
@@ -215,9 +213,6 @@ class TreeMapFragment : Fragment(), TreeNameDialogFragment.TreeNameDialogListene
             // todo add tree at user's location - if location permission granted and location available
 
         showTreeDialog()
-
-//           getTreeName()
-        // addTreeAtLocation()
         }
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map_view) as SupportMapFragment
@@ -259,7 +254,7 @@ class TreeMapFragment : Fragment(), TreeNameDialogFragment.TreeNameDialogListene
         fusedLocationProvider?.lastLocation?.addOnCompleteListener(requireActivity()) { locationRequestTask ->
             val location = locationRequestTask.result
             if (location != null) {
-              val treeName = treeViewModel.enteredTreeName
+              val treeName = treeViewModel.treeName()
                 if (treeName != null) {
                     val tree = Tree(
                         name = treeName,
@@ -312,9 +307,6 @@ class TreeMapFragment : Fragment(), TreeNameDialogFragment.TreeNameDialogListene
        val treeListSelection =  listOf("Fir", "Oak", "Pine", "Redwood", "Sequoia").random()
         TreeNameDialogFragment().show(childFragmentManager, TreeNameDialogFragment.TAG)
 
-
-
-
         // old code that didn't work out
 //       val treeInput = EditText(requireActivity())
 
@@ -338,8 +330,6 @@ class TreeMapFragment : Fragment(), TreeNameDialogFragment.TreeNameDialogListene
 //               TreeNameDialogFragment().show(
 //                   childFragmentManager, TreeNameDialogFragment.TAG
 //               )
-
-
 //        val treeNamed = treeViewModel.treeName()
 //        return treeNamed
 
